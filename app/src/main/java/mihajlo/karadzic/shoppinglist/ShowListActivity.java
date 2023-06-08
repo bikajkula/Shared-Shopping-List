@@ -33,7 +33,7 @@ public class ShowListActivity extends AppCompatActivity implements View.OnClickL
     private ListView list;
     private Boolean cameFromShared;
     private DbHelper dbHelper;
-    public static String ADD_TASK_URL = "https://piars-server.cyclic.app/tasks";
+    public static String ADD_TASK_URL = "http://piars-server.cyclic.app/tasks";
     boolean flag;
     private String title_of_list;
     private String is_list_shared;

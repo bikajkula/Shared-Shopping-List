@@ -2,6 +2,7 @@ package mihajlo.karadzic.shoppinglist;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -18,6 +19,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Intent intentService = new Intent(this, MyService.class);
+        startService(intentService);
+
+
         but_log=findViewById(R.id.but_log);
 
         but_reg=findViewById(R.id.but_reg);
@@ -26,6 +31,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         but_log.setOnClickListener(this);
         but_reg.setOnClickListener(this);
+
+
     }
 
     @Override

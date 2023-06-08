@@ -29,7 +29,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener{
     boolean flag;
     private final String DB_NAME = "shared_list_app.db";
     private HttpHelper httpHelper;
-    public static String REGISTER_USER_URL = "https://piars-server.cyclic.app/users";
+    public static String REGISTER_USER_URL = "http://piars-server.cyclic.app/users";
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
