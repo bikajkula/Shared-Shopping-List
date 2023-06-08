@@ -14,12 +14,25 @@ import java.util.ArrayList;
 
 public class CustomTaskAdapter extends BaseAdapter {
 
+    private final String DB_NAME = "shared_list_app.db";
     private Context context;
     private ArrayList<ListTaskModel> task_models;
+    private DbHelper dbHelper;
 
     public CustomTaskAdapter(Context context){
         this.context = context;
         task_models = new ArrayList<ListTaskModel>();
+        dbHelper = new DbHelper(context,DB_NAME,null,1);
+    }
+
+    public void update (ListTaskModel[] lists) {
+        task_models.clear();
+        if(lists != null) {
+            for(ListTaskModel list : lists) {
+                task_models.add(list);
+            }
+        }
+        notifyDataSetChanged();
     }
 
     @Override
@@ -65,17 +78,18 @@ public class CustomTaskAdapter extends BaseAdapter {
 
         ListTaskModel model = (ListTaskModel) getItem(i);
 
-
         vh.shared.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if(b){
                     vh.title.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
                     model.setmChecked(true);
+                    dbHelper.updateItem(model.getuID(),Boolean.toString(true));
                 }
                 else{
                     vh.title.setPaintFlags(0);
                     model.setmChecked(false);
+                    dbHelper.updateItem(model.getuID(),Boolean.toString(false));
                 }
             }
         });

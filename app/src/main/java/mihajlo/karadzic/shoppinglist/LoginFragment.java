@@ -22,6 +22,9 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
 
     EditText user, pass;
     Button but_log;
+
+    private final String DB_NAME = "shared_list_app.db";
+
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -80,18 +83,20 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
     @Override
     public void onClick(View view) {
 
-        if(user.getText().toString().equals("demo") && pass.getText().toString().equals("demo")){
+        DbHelper dbHelper = new DbHelper(getActivity(), DB_NAME, null, 1);
+        if(dbHelper.checkUser(user.getText().toString(), pass.getText().toString())){
             Intent intent = new Intent(getActivity(), WelcomeActivity.class);
 
             Bundle bundle = new Bundle();
             bundle.putString("user", user.getText().toString());
             intent.putExtras(bundle);
 
+            Toast.makeText(getContext(), "Login successful", Toast.LENGTH_SHORT).show();
+
             startActivity(intent);
         }
         else{
-            Toast toast = Toast.makeText(getContext(), "Incorrect password / username", Toast.LENGTH_SHORT);
-            toast.show();
+            Toast.makeText(getContext(), "Incorrect password / username.\n Login failed.", Toast.LENGTH_SHORT).show();
         }
 
     }

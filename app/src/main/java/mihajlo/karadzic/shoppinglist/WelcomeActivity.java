@@ -14,9 +14,14 @@ import android.widget.TextView;
 
 public class WelcomeActivity extends AppCompatActivity implements View.OnClickListener {
 
+    private final String DB_NAME = "shared_list_app.db";
     private TextView user;
-    private Button but_new_list;
+    private Button but_new_list, but_see_lists;
     private CustomRowAdapter adapter;
+    private TextView emptyView;
+    private DbHelper dbHelper;
+    private String username;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -24,30 +29,32 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
 
         Bundle bundle = getIntent().getExtras();
         user = findViewById(R.id.wel_user);
-        user.setText(bundle.getString("user", "Default"));
+
+        username = bundle.getString("user", "Default");
+
+        user.setText(username);
 
         but_new_list = findViewById(R.id.but_new_list);
         but_new_list.setOnClickListener(this);
 
+        but_see_lists = findViewById(R.id.but_see_lists);
+        but_see_lists.setOnClickListener(this);
+
         adapter = new CustomRowAdapter(this);
         ListView list = findViewById(R.id.list_of_lists);
-
-        adapter.addModel(new ListRowModel("naslov1","true"));
-        adapter.addModel(new ListRowModel("naslov2","false"));
-        adapter.addModel(new ListRowModel("naslov3","true"));
-        adapter.addModel(new ListRowModel("naslov4","false"));
-        adapter.addModel(new ListRowModel("naslov5","true"));
-        adapter.addModel(new ListRowModel("naslov6","false"));
-        adapter.addModel(new ListRowModel("naslov7","true"));
-        adapter.addModel(new ListRowModel("naslov8","true"));
-        adapter.addModel(new ListRowModel("naslov9","true"));
-        adapter.addModel(new ListRowModel("naslov10","false"));
+        emptyView = findViewById(R.id.empty_lol_view);   //list of lists
+        list.setEmptyView(emptyView);
 
         list.setAdapter(adapter);
+
+        dbHelper = new DbHelper(this,DB_NAME,null,1);
 
         list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                ListRowModel rm = (ListRowModel) adapter.getItem(i);
+
+                dbHelper.deleteList(rm.mTitle);
                 adapter.removeModel(i);
 
                 return false;
@@ -67,36 +74,50 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+
+        ListRowModel[] lists = dbHelper.readLists(user.getText().toString());
+        adapter.update(lists);
+    }
+
+    @Override
     public void onClick(View view) {
-        Intent intent = new Intent(this, NewListActivity.class);
+        if(view.getId() == R.id.but_new_list) {
+            Intent intent = new Intent(this, NewListActivity.class);
 
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("New List Dialog");
+            builder.setMessage("Are you sure you want to create a new list?");
+            builder.setCancelable(false);
 
+            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("New List Dialog");
-        builder.setMessage("Are you sure you want to create a new list?");
-        builder.setCancelable(false);
+                    Bundle bundle = new Bundle();
+                    bundle.putString("user", user.getText().toString());
+                    intent.putExtras(bundle);
 
-        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
+                    startActivity(intent);
+                }
+            });
 
-                Bundle bundle = new Bundle();
-                bundle.putString("user", user.getText().toString());
-                intent.putExtras(bundle);
+            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    dialogInterface.cancel();
+                }
+            });
 
-                startActivity(intent);
-            }
-        });
+            AlertDialog ad = builder.create();
+            ad.show();
 
-        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.cancel();
-            }
-        });
+        }
+        else if(view.getId() == R.id.but_see_lists){
+            ListRowModel[] lists = dbHelper.readMyLists(user.getText().toString());
+            adapter.update(lists);
+        }
 
-        AlertDialog ad = builder.create();
-        ad.show();
     }
 }

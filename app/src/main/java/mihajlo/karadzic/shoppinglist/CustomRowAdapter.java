@@ -46,6 +46,16 @@ public class CustomRowAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
+    public void update (ListRowModel[] lists) {
+        row_models.clear();
+        if(lists != null) {
+            for(ListRowModel list : lists) {
+                row_models.add(list);
+            }
+        }
+        notifyDataSetChanged();
+    }
+
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
 

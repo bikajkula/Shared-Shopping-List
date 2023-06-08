@@ -49,15 +49,26 @@
             android:layout_weight="1"
             android:id="@+id/but_see_lists"
             android:backgroundTint="@color/teal_200"
-            android:enabled="false"
             />
 
     </LinearLayout>
 
-    <ListView
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/list_of_lists"
-        />
-
+        android:orientation="horizontal"
+        >
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/list_of_lists"
+            />
+        <TextView
+            android:id="@+id/empty_lol_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@string/empty_view_text" />
+    </LinearLayout>
 </LinearLayout>

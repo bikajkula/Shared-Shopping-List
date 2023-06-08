@@ -26,4 +26,5 @@
     <string name="list_row_title">Naslov:</string>
     <string name="show_list_add">ADD</string>
     <string name="show_list_task_title">Task title</string>
+    <string name="empty_view_text">No lists to show.</string>
 </resources>

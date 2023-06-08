@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -20,6 +21,8 @@ public class RegisterFragment extends Fragment implements View.OnClickListener{
 
     EditText user, pass, email;
     Button but_reg;
+
+    private final String DB_NAME = "shared_list_app.db";
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -79,12 +82,19 @@ public class RegisterFragment extends Fragment implements View.OnClickListener{
 
     @Override
     public void onClick(View view) {
-        Intent intent = new Intent(getActivity(), WelcomeActivity.class);
+        Intent intent = new Intent(getActivity(), MainActivity.class);
 
-        Bundle bundle = new Bundle();
-        bundle.putString("user", user.getText().toString());
-        intent.putExtras(bundle);
+        DbHelper dbHelper = new DbHelper(getActivity(), DB_NAME, null, 1);
 
-        startActivity(intent);
+        if (!dbHelper.doesUserExist(user.getText().toString())){
+            dbHelper.insertUser(user.getText().toString(),email.getText().toString(),pass.getText().toString());
+            Toast.makeText(getActivity(), "Registration successful!", Toast.LENGTH_SHORT).show();
+            startActivity(intent);
+        }
+        else{
+            Toast.makeText(getActivity(), "Registration failed!", Toast.LENGTH_SHORT).show();
+        }
+
+
     }
 }
