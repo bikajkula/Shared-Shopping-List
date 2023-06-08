@@ -7,13 +7,16 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 
 public class WelcomeActivity extends AppCompatActivity implements View.OnClickListener {
 
-    TextView user;
-    Button but_new_list;
+    private TextView user;
+    private Button but_new_list;
+    private CustomRowAdapter adapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,6 +29,41 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
         but_new_list = findViewById(R.id.but_new_list);
         but_new_list.setOnClickListener(this);
 
+        adapter = new CustomRowAdapter(this);
+        ListView list = findViewById(R.id.list_of_lists);
+
+        adapter.addModel(new ListRowModel("naslov1","true"));
+        adapter.addModel(new ListRowModel("naslov2","false"));
+        adapter.addModel(new ListRowModel("naslov3","true"));
+        adapter.addModel(new ListRowModel("naslov4","false"));
+        adapter.addModel(new ListRowModel("naslov5","true"));
+        adapter.addModel(new ListRowModel("naslov6","false"));
+        adapter.addModel(new ListRowModel("naslov7","true"));
+        adapter.addModel(new ListRowModel("naslov8","true"));
+        adapter.addModel(new ListRowModel("naslov9","true"));
+        adapter.addModel(new ListRowModel("naslov10","false"));
+
+        list.setAdapter(adapter);
+
+        list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                adapter.removeModel(i);
+
+                return false;
+            }
+        });
+
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                ListRowModel model = (ListRowModel) adapter.getItem(i);
+
+                Intent intent = new Intent(WelcomeActivity.this, ShowListActivity.class);
+                intent.putExtra("title",model.getmTitle());
+                startActivity(intent);
+            }
+        });
     }
 
     @Override

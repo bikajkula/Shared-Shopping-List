@@ -22,4 +22,8 @@
     <string name="rad_yes">Yes</string>
     <string name="rad_no">No</string>
     <string name="save_list">SAVE</string>
+    <string name="list_row_shared">Shared:</string>
+    <string name="list_row_title">Naslov:</string>
+    <string name="show_list_add">ADD</string>
+    <string name="show_list_task_title">Task title</string>
 </resources>

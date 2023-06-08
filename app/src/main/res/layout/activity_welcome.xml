@@ -13,16 +13,16 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="@string/welcome"
-        android:textSize="30dp"
-        android:textStyle="bold"
+        android:textSize="25dp"
         />
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="@string/wel_default_user"
+        android:textStyle="bold"
         android:id="@+id/wel_user"
-        android:textSize="15dp"
+        android:textSize="25dp"
         />
 
     <LinearLayout
@@ -53,5 +53,11 @@
             />
 
     </LinearLayout>
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/list_of_lists"
+        />
 
 </LinearLayout>

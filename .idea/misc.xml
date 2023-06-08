@@ -6,9 +6,13 @@
         <entry key="..\:/ftn/piars/ShoppingList/app/src/main/res/layout/activity_login.xml" value="0.3463541666666667" />
         <entry key="..\:/ftn/piars/ShoppingList/app/src/main/res/layout/activity_main.xml" value="0.27717391304347827" />
         <entry key="..\:/ftn/piars/ShoppingList/app/src/main/res/layout/activity_new_list.xml" value="0.25" />
+        <entry key="..\:/ftn/piars/ShoppingList/app/src/main/res/layout/activity_show_list.xml" value="0.28815733219324496" />
         <entry key="..\:/ftn/piars/ShoppingList/app/src/main/res/layout/activity_welcome.xml" value="0.25" />
+        <entry key="..\:/ftn/piars/ShoppingList/app/src/main/res/layout/activity_welcome_list_row.xml" value="0.28815733219324496" />
         <entry key="..\:/ftn/piars/ShoppingList/app/src/main/res/layout/fragment_login.xml" value="0.25" />
         <entry key="..\:/ftn/piars/ShoppingList/app/src/main/res/layout/fragment_register.xml" value="0.33" />
+        <entry key="..\:/ftn/piars/ShoppingList/app/src/main/res/layout/show_list_row.xml" value="0.28815733219324496" />
+        <entry key="..\:/ftn/piars/ShoppingList/app/src/main/res/layout/welcome_list_row.xml" value="0.28815733219324496" />
       </map>
     </option>
   </component>
