@@ -28,7 +28,7 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
     private TextView emptyView;
     private DbHelper dbHelper;
     private String username;
-    public static String GET_LIST_URL = "http://192.168.56.1:3000/lists";
+    public static String GET_LIST_URL = "https://piars-server.cyclic.app/lists";
     boolean flag;
     boolean shared_clicked=false;
     private HttpHelper httpHelper;

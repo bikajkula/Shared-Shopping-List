@@ -19,7 +19,7 @@ import java.io.IOException;
 public class NewListActivity extends AppCompatActivity implements View.OnClickListener {
 
     private final String DB_NAME = "shared_list_app.db";
-    public static String NEW_LIST_URL = "http://192.168.56.1:3000/lists";
+    public static String NEW_LIST_URL = "https://piars-server.cyclic.app/lists";
     private HttpHelper httpHelper;
     boolean flag;
     TextView title_view;

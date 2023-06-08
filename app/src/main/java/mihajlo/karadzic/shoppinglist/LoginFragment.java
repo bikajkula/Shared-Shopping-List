@@ -30,7 +30,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
     boolean flag;
     private final String DB_NAME = "shared_list_app.db";
     private HttpHelper httpHelper;
-    public static String LOGIN_URL = "http://192.168.56.1:3000/login";
+    public static String LOGIN_URL = "https://piars-server.cyclic.app/login";
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
