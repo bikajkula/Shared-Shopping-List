@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".LoginFragment"
+    android:orientation="vertical"
+    android:id="@+id/lay_log"
+    >
+
+    <!-- TODO: Update blank fragment layout -->
+    <EditText
+        android:layout_width="100dp"
+        android:layout_height="40dp"
+        android:layout_gravity="center"
+        android:inputType="text"
+        android:hint="@string/user"
+        android:id="@+id/user_log"
+        />
+    <EditText
+        android:layout_width="100dp"
+        android:layout_height="40dp"
+        android:layout_gravity="center"
+        android:inputType="textPassword"
+        android:hint="@string/pass"
+        android:id="@+id/pass_log"
+        />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/login"
+        android:layout_gravity="center"
+        android:id="@+id/but_log_2"
+        />
+
+</LinearLayout>
