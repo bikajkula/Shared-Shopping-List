@@ -34,4 +34,13 @@
         android:id="@+id/but_log_2"
         />
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="bottom|center"
+        android:orientation="horizontal"
+        >
+        <include layout="@layout/home_button" />
+    </LinearLayout>
+
 </LinearLayout>

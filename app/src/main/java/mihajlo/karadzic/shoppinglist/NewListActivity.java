@@ -11,13 +11,20 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+
 public class NewListActivity extends AppCompatActivity implements View.OnClickListener {
 
     private final String DB_NAME = "shared_list_app.db";
-
+    public static String NEW_LIST_URL = "http://192.168.56.1:3000/lists";
+    private HttpHelper httpHelper;
+    boolean flag;
     TextView title_view;
     EditText title_edit;
-    Button but_ok, but_save;
+    Button but_ok, but_save, but_home;
     String user;
     RadioButton but_yes, but_no;
 
@@ -33,10 +40,15 @@ public class NewListActivity extends AppCompatActivity implements View.OnClickLi
         title_view=findViewById(R.id.list_title_text);
         title_edit=findViewById(R.id.list_title);
 
+        httpHelper = new HttpHelper();
+
         but_no=findViewById(R.id.rad_but_no);
         but_yes=findViewById(R.id.rad_but_yes);
         but_ok=findViewById(R.id.but_new_list_ok);
         but_save=findViewById(R.id.but_new_list_save);
+
+        but_home = findViewById(R.id.but_home);
+        but_home.setOnClickListener(this);
 
         but_ok.setOnClickListener(this);
         but_save.setOnClickListener(this);
@@ -71,12 +83,57 @@ public class NewListActivity extends AppCompatActivity implements View.OnClickLi
                 Toast.makeText(this, "Saving failed!", Toast.LENGTH_SHORT).show();
             }
             else{
-                Toast.makeText(this, "Saving successful!", Toast.LENGTH_SHORT).show();
-                dbHelper.insertList(rm,user);
-                adapter.addModel(rm);
-                startActivity(intent);
+                if(but_yes.isChecked()){
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                JSONObject jsonObject = new JSONObject();
+                                jsonObject.put("name", rm.getmTitle());
+                                jsonObject.put("creator", user);
+                                jsonObject.put("shared", but_yes.isChecked());
+                                flag = httpHelper.postJSONObjectFromURL(NEW_LIST_URL, jsonObject);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+
+                            if(flag){
+                                dbHelper.insertList(rm,user);
+                                adapter.addModel(rm);
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(getApplicationContext(), "Saving successful!", Toast.LENGTH_SHORT).show();
+                                        startActivity(intent);
+                                    }
+                                });
+                            } else{
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(getApplicationContext(), "Saving failed!", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
+
+                        }
+                    }).start();
+                }
+                else{
+                    dbHelper.insertList(rm,user);
+                    adapter.addModel(rm);
+                    Toast.makeText(getApplicationContext(), "Saving successful!", Toast.LENGTH_SHORT).show();
+                    startActivity(intent);
+                }
+
             }
 
+        }
+        else if(view.getId() == R.id.but_home){
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
         }
     }
 }

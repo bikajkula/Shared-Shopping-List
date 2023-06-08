@@ -12,6 +12,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link RegisterFragment#newInstance} factory method to
@@ -20,10 +25,11 @@ import android.widget.Toast;
 public class RegisterFragment extends Fragment implements View.OnClickListener{
 
     EditText user, pass, email;
-    Button but_reg;
-
+    Button but_reg,but_home;
+    boolean flag;
     private final String DB_NAME = "shared_list_app.db";
-
+    private HttpHelper httpHelper;
+    public static String REGISTER_USER_URL = "http://192.168.56.1:3000/users";
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -70,6 +76,8 @@ public class RegisterFragment extends Fragment implements View.OnClickListener{
         // Inflate the layout for this fragment
         View v =  inflater.inflate(R.layout.fragment_register, container, false);
 
+        httpHelper = new HttpHelper();
+
         user = v.findViewById(R.id.user_reg);
         pass = v.findViewById(R.id.pass_reg);
         email = v.findViewById(R.id.email_reg);
@@ -77,24 +85,65 @@ public class RegisterFragment extends Fragment implements View.OnClickListener{
         but_reg = v.findViewById(R.id.but_reg_2);
         but_reg.setOnClickListener(this);
 
+        but_home = v.findViewById(R.id.but_home);
+        but_home.setOnClickListener(this);
+
         return v;
     }
 
     @Override
     public void onClick(View view) {
-        Intent intent = new Intent(getActivity(), MainActivity.class);
+        if(view.getId() == R.id.but_reg_2){
+            Intent intent = new Intent(getActivity(), MainActivity.class);
 
-        DbHelper dbHelper = new DbHelper(getActivity(), DB_NAME, null, 1);
+            DbHelper dbHelper = new DbHelper(getActivity(), DB_NAME, null, 1);
 
-        if (!dbHelper.doesUserExist(user.getText().toString())){
-            dbHelper.insertUser(user.getText().toString(),email.getText().toString(),pass.getText().toString());
-            Toast.makeText(getActivity(), "Registration successful!", Toast.LENGTH_SHORT).show();
+            if (!dbHelper.doesUserExist(user.getText().toString())){
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            JSONObject jsonObject = new JSONObject();
+                            jsonObject.put("username", user.getText().toString());
+                            jsonObject.put("password", pass.getText().toString());
+                            jsonObject.put("email", email.getText().toString());
+                            flag = httpHelper.postJSONObjectFromURL(REGISTER_USER_URL, jsonObject);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+                        if(flag){
+                            Intent intent = new Intent(getActivity(), MainActivity.class);
+                            dbHelper.insertUser(user.getText().toString(),email.getText().toString(),pass.getText().toString());
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(getActivity(), "Registration successful!", Toast.LENGTH_SHORT).show();
+                                    startActivity(intent);
+                                }
+                            });
+                        } else{
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(getActivity(), "Registration failed!", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
+
+                    }
+                }).start();
+            }
+            else{
+                Toast.makeText(getActivity(), "Registration failed!", Toast.LENGTH_SHORT).show();
+            }
+        }
+        else if(view.getId() == R.id.but_home){
+            Intent intent = new Intent(getActivity(), MainActivity.class);
             startActivity(intent);
         }
-        else{
-            Toast.makeText(getActivity(), "Registration failed!", Toast.LENGTH_SHORT).show();
-        }
-
-
     }
 }

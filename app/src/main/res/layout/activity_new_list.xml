@@ -57,6 +57,7 @@
             android:id="@+id/rad_but_no"/>
     </RadioGroup>
 
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -64,6 +65,7 @@
         android:gravity="right|bottom"
         android:weightSum="5"
         >
+
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -71,5 +73,12 @@
             android:id="@+id/but_new_list_save"
             />
 
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        >
+        <include layout="@layout/home_button" />
     </LinearLayout>
 </LinearLayout>

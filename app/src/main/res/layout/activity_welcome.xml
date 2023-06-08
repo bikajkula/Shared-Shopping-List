@@ -29,7 +29,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:weightSum="2"
+        android:weightSum="3"
         android:id="@+id/lay_wel"
         >
 
@@ -50,6 +50,14 @@
             android:id="@+id/but_see_lists"
             android:backgroundTint="@color/teal_200"
             />
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/see_shared_lists"
+            android:layout_weight="1"
+            android:id="@+id/but_see_shared_lists"
+            android:backgroundTint="@color/teal_200"
+            />
 
     </LinearLayout>
 
@@ -57,18 +65,35 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="horizontal"
+        android:weightSum="10"
+        android:orientation="vertical"
         >
-        <ListView
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/list_of_lists"
-            />
-        <TextView
-            android:id="@+id/empty_lol_view"
+            android:layout_height="0dp"
+            android:layout_weight="10"
+            android:orientation="horizontal"
+            >
+
+            <ListView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/list_of_lists"
+                />
+
+            <TextView
+                android:id="@+id/empty_lol_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="@string/empty_view_text" />
+        </LinearLayout>
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="@string/empty_view_text" />
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            >
+            <include layout="@layout/home_button" />
+        </LinearLayout>
     </LinearLayout>
 </LinearLayout>

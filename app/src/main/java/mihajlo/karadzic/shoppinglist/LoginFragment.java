@@ -13,6 +13,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link LoginFragment#newInstance} factory method to
@@ -21,9 +26,11 @@ import android.widget.Toast;
 public class LoginFragment extends Fragment implements View.OnClickListener{
 
     EditText user, pass;
-    Button but_log;
-
+    Button but_log,but_home;
+    boolean flag;
     private final String DB_NAME = "shared_list_app.db";
+    private HttpHelper httpHelper;
+    public static String LOGIN_URL = "http://192.168.56.1:3000/login";
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -71,11 +78,16 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
         // Inflate the layout for this fragment
         View v =  inflater.inflate(R.layout.fragment_login, container, false);
 
+        httpHelper = new HttpHelper();
+
         user = v.findViewById(R.id.user_log);
         pass = v.findViewById(R.id.pass_log);
 
         but_log = v.findViewById(R.id.but_log_2);
         but_log.setOnClickListener(this);
+
+        but_home = v.findViewById(R.id.but_home);
+        but_home.setOnClickListener(this);
 
         return v;
     }
@@ -83,20 +95,55 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
     @Override
     public void onClick(View view) {
 
-        DbHelper dbHelper = new DbHelper(getActivity(), DB_NAME, null, 1);
-        if(dbHelper.checkUser(user.getText().toString(), pass.getText().toString())){
-            Intent intent = new Intent(getActivity(), WelcomeActivity.class);
+        if(view.getId() == R.id.but_log_2){
+            DbHelper dbHelper = new DbHelper(getActivity(), DB_NAME, null, 1);
+            if(dbHelper.checkUser(user.getText().toString(), pass.getText().toString())){
 
-            Bundle bundle = new Bundle();
-            bundle.putString("user", user.getText().toString());
-            intent.putExtras(bundle);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            JSONObject jsonObject = new JSONObject();
+                            jsonObject.put("username", user.getText().toString());
+                            jsonObject.put("password", pass.getText().toString());
+                            flag = httpHelper.postJSONObjectFromURL(LOGIN_URL, jsonObject);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
 
-            Toast.makeText(getContext(), "Login successful", Toast.LENGTH_SHORT).show();
+                        if(flag){
+                            Intent intent = new Intent(getActivity(), WelcomeActivity.class);
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(getContext(), "Login successful", Toast.LENGTH_SHORT).show();                                    startActivity(intent);
+                                    Bundle bundle = new Bundle();
+                                    bundle.putString("user", user.getText().toString());
+                                    intent.putExtras(bundle);
+                                    startActivity(intent);
+                                }
+                            });
+                        } else{
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(getContext(), "Incorrect password / username.\n Login failed.", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
 
-            startActivity(intent);
+                    }
+                }).start();
+            }
+            else{
+                Toast.makeText(getContext(), "Incorrect password / username.\n Login failed.", Toast.LENGTH_SHORT).show();
+            }
         }
-        else{
-            Toast.makeText(getContext(), "Incorrect password / username.\n Login failed.", Toast.LENGTH_SHORT).show();
+        else if(view.getId() == R.id.but_home){
+            Intent intent = new Intent(getActivity(), MainActivity.class);
+            startActivity(intent);
         }
 
     }

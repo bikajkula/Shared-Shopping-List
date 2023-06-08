@@ -11,21 +11,34 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 
 public class WelcomeActivity extends AppCompatActivity implements View.OnClickListener {
 
     private final String DB_NAME = "shared_list_app.db";
     private TextView user;
-    private Button but_new_list, but_see_lists;
+    private Button but_new_list, but_see_lists,but_home,but_see_shared_lists;
     private CustomRowAdapter adapter;
     private TextView emptyView;
     private DbHelper dbHelper;
     private String username;
+    public static String GET_LIST_URL = "http://192.168.56.1:3000/lists";
+    boolean flag;
+    boolean shared_clicked=false;
+    private HttpHelper httpHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
+
+        httpHelper = new HttpHelper();
 
         Bundle bundle = getIntent().getExtras();
         user = findViewById(R.id.wel_user);
@@ -39,6 +52,12 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
 
         but_see_lists = findViewById(R.id.but_see_lists);
         but_see_lists.setOnClickListener(this);
+
+        but_see_shared_lists = findViewById(R.id.but_see_shared_lists);
+        but_see_shared_lists.setOnClickListener(this);
+
+        but_home= findViewById(R.id.but_home);
+        but_home.setOnClickListener(this);
 
         adapter = new CustomRowAdapter(this);
         ListView list = findViewById(R.id.list_of_lists);
@@ -54,9 +73,43 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
                 ListRowModel rm = (ListRowModel) adapter.getItem(i);
 
-                dbHelper.deleteList(rm.mTitle);
-                adapter.removeModel(i);
-
+                if(rm.mShared.equals("Yes")){
+                    new Thread(new Runnable() {
+                        public void run() {
+                            try {
+                                flag = httpHelper.httpDelete(GET_LIST_URL + "/" + username + "/" + rm.getmTitle());
+                                if(!flag){
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast toast = Toast.makeText(getApplicationContext(), "Error! You are not the creator of that list!", Toast.LENGTH_LONG);
+                                            toast.show();
+                                        }
+                                    });
+                                }
+                                else{
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast toast = Toast.makeText(getApplicationContext(), "Successfully deleted!", Toast.LENGTH_LONG);
+                                            toast.show();
+                                            dbHelper.deleteList(rm.mTitle);
+                                            adapter.removeModel(i);
+                                        }
+                                    });
+                                }
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }).start();
+                }
+                else {
+                    dbHelper.deleteList(rm.mTitle);
+                    adapter.removeModel(i);
+                }
                 return false;
             }
         });
@@ -68,6 +121,8 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
 
                 Intent intent = new Intent(WelcomeActivity.this, ShowListActivity.class);
                 intent.putExtra("title",model.getmTitle());
+                intent.putExtra("shared",model.getmShared());
+                intent.putExtra("cameFromShared",shared_clicked);
                 startActivity(intent);
             }
         });
@@ -115,8 +170,59 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
 
         }
         else if(view.getId() == R.id.but_see_lists){
+            shared_clicked=false;
             ListRowModel[] lists = dbHelper.readMyLists(user.getText().toString());
             adapter.update(lists);
+        }
+        else if(view.getId() == R.id.but_home){
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+        }
+        else if(view.getId() == R.id.but_see_shared_lists){
+            shared_clicked = true;
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    JSONArray jsonArray = new JSONArray();
+                    JSONObject jsonObject = new JSONObject();
+                    try {
+                        jsonArray = httpHelper.getJSONArrayFromURL(GET_LIST_URL);
+                        if(jsonArray == null)
+                        {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast toast = Toast.makeText(getApplicationContext(), "No shared lists available.", Toast.LENGTH_LONG);
+                                    toast.show();
+                                }
+                            });
+                        }
+                        ListRowModel[] liste = new ListRowModel[jsonArray.length()];
+                        for(int i = 0; i < jsonArray.length(); i++)
+                        {
+                            jsonObject = jsonArray.getJSONObject(i);
+                            String sh = String.valueOf(jsonObject.getBoolean("shared")).toString();
+                            if(sh.equals("true")){
+                                sh = "Yes";
+                            }
+                            else{
+                                sh="No";
+                            }
+                            liste[i] = new ListRowModel(String.valueOf(jsonObject.getString("name")),sh) ;
+                        }
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                adapter.update(liste);
+                            }
+                        });
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
         }
 
     }

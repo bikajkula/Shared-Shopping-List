@@ -13,8 +13,8 @@
     <string name="reg_pass">Password:</string>
     <string name="welcome">WELCOME</string>
     <string name="wel_default_user">USERX</string>
-    <string name="new_list">NEW LIST</string>
-    <string name="see_lists">SEE MY LISTS</string>
+    <string name="new_list">NEW \nLIST</string>
+    <string name="see_lists">SEE \nMY LISTS</string>
     <string name="new_list_ok">OK</string>
     <string name="list_title">List title</string>
     <string name="new_list_default_title">TITLE</string>
@@ -27,4 +27,7 @@
     <string name="show_list_add">ADD</string>
     <string name="show_list_task_title">Task title</string>
     <string name="empty_view_text">No lists to show.</string>
+    <string name="home">HOME</string>
+    <string name="see_shared_lists">SEE SHARED LISTS</string>
+    <string name="refresh">REFRESH</string>
 </resources>
